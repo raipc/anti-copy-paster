@@ -28,8 +28,14 @@ public class TensorflowModel extends PredictionModel {
     private final SavedModelBundle modelBundle;
 
     static private final Logger LOG = Logger.getInstance(TensorflowModel.class);
+    // Tensorflow model initialization is time-consuming so keep a singleton
+    private static final TensorflowModel INSTANCE = new TensorflowModel();
 
-    public TensorflowModel() {
+    public static TensorflowModel getInstance() {
+        return INSTANCE;
+    }
+
+    private TensorflowModel() {
         TensorflowNativeLibraryLoader.load();
         modelBundle = loadModel(modelResourcePath);
     }

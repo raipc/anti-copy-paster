@@ -40,7 +40,6 @@ public class RefactoringNotificationTask extends TimerTask {
     private final ConcurrentLinkedQueue<RefactoringEvent> eventsQueue = new ConcurrentLinkedQueue<>();
     private final NotificationGroup notificationGroup = NotificationGroupManager.getInstance()
             .getNotificationGroup("Extract Method suggestion");
-    private final PredictionModel model = new TensorflowModel();
     private final Timer timer;
 
     public RefactoringNotificationTask(Timer timer) {
@@ -50,6 +49,8 @@ public class RefactoringNotificationTask extends TimerTask {
     @Override
     public void run() {
         while (!eventsQueue.isEmpty()) {
+            // do not pre-load and store in a field to not freeze UI thread
+            final PredictionModel model = TensorflowModel.getInstance();
             try {
                 final RefactoringEvent event = eventsQueue.poll();
                 ApplicationManager.getApplication().runReadAction(() -> {
